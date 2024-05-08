@@ -1,51 +1,41 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+import pandas as pd
 import streamlit as st
-from streamlit.logger import get_logger
 
-LOGGER = get_logger(__name__)
+# Initialize empty list in session_state to store actions
+if "actions" not in st.session_state:
+    st.session_state["actions"] = []
 
+# Title and app description
+st.title("Waterpolo Statistics Tracker")
+st.write("Keep track of waterpolo actions during the match!")
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
+# Define actions
+actions = ["Balverlies", "Balverovering"]
 
-    st.write("# Welcome to Streamlit! 👋")
+# Create a sidebar for quarter selection
+quarter_options = ["Periode 1", "Periode 2", "Periode", "Periode"]
+selected_quarter = st.sidebar.selectbox("Selecteer periode", quarter_options)
 
-    st.sidebar.success("Select a demo above.")
+# Create a 3-column layout for player selection
+player_cols = st.columns(3)
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+# Player selection using radio buttons
+player_options = {f"Player {i}": i for i in range(1, 15)}
+selected_player = st.radio("Select Player", list(player_options.keys()), horizontal=True, key="player_select")
 
+# Action selection using buttons
+action_selection_col, _ = st.columns(2)  # Create columns for action selection and spacing
+with action_selection_col:
+    for action in actions:
+        if st.button(action):
+            # Add action to session_state list with selected player and quarter
+            st.session_state["actions"].append({"Player": player_options[selected_player], "Action": action, "Quarter": selected_quarter})
 
-if __name__ == "__main__":
-    run()
+# Reset button to clear actions
+if st.button("Reset Actions"):
+    st.session_state["actions"] = []  # Clear the actions list
+
+# Display dataframe of actions
+df = pd.DataFrame(st.session_state["actions"])
+st.dataframe(df)
+
