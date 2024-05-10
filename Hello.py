@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import streamlit_shortcuts
 
 # Initialize empty list in session_state to store actions
 if "acties" not in st.session_state:
@@ -45,7 +46,7 @@ def create_action_selection(group_name, actions):
 
 
 # Action selection using buttons for each action, displayed horizontally
-action_selection_col1, action_selection_col2 = st.columns(2)  # Two columns for action groups
+action_selection_col1, action_selection_col2, action_selection_col3 = st.columns(3)  # Three columns for action groups
 with action_selection_col1:
     create_action_selection("Schoten", action_groups["Schoten"])
 with action_selection_col2:
@@ -63,7 +64,7 @@ with delete_col1:
     if st.button("Verwijder Laatste Actie"):
         if st.session_state["acties"]:  # Check if there are any actions
             st.session_state["acties"].pop()  # Remove the last action from the list
-
+            
 # Display dataframe of actions (translated)
 df = pd.DataFrame(st.session_state["acties"])
 
