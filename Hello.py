@@ -13,6 +13,7 @@ st.write("Hou bij welke waterpolo acties er tijdens de wedstrijd plaatsvinden!")
 action_groups = {
     "Schoten": ["Doelpunt", "Geen Doelpunt"],
     "Passes": ["Goede Pass", "Slechte Pass"],
+    "Overtredingen": ["Aanv. overtreding", "Overtreding", "U20", "UMV", "UMV4"],
 }
 
 # Create a sidebar for quarter selection (translated)
@@ -49,8 +50,11 @@ with action_selection_col1:
     create_action_selection("Schoten", action_groups["Schoten"])
 with action_selection_col2:
     create_action_selection("Passes", action_groups["Passes"])
+with action_selection_col3:
+    create_action_selection("Overtredingen", action_groups["Overtredingen"])
 
 # Reset button and "Delete Last Action" button (translated)
+
 reset_col1, delete_col1 = st.columns(2)
 with reset_col1:
     if st.button("Reset Acties"):
