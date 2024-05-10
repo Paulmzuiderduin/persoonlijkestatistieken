@@ -12,9 +12,9 @@ st.write("Hou bij welke waterpolo acties er tijdens de wedstrijd plaatsvinden!")
 
 # Define action groups and their corresponding actions (translated)
 action_groups = {
-    "Schoten": ["Doelpunt", "Geen Doelpunt"],
+    "Schoten": ["Doelpunt", "Mis", "Redding", "Block"],
     "Passes": ["Goede Pass", "Slechte Pass"],
-    "Overtredingen": ["Aanv. overtreding", "Overtreding", "U20", "UMV", "UMV4"],
+    "Overtredingen": ["Overtreding", "U20", "UMV", "UMV4"],
 }
 
 # Create a sidebar for quarter selection (translated)
@@ -22,7 +22,7 @@ quarter_options = ["Periode 1", "Periode 2", "Periode 3", "Periode 4"]
 selected_quarter = st.sidebar.selectbox("Selecteer periode", quarter_options)
 
 # Create a larger layout for player selection (translated)
-player_cols = st.columns(3)  # Use 3 columns for players
+player_cols = st.columns(6)  # Use 3 columns for players
 
 # Player selection using radio buttons (translated)
 player_options = {f"Speler {i}": i for i in range(1, 15)}
@@ -34,7 +34,7 @@ def create_action_selection(group_name, actions):
     with action_col1:
         st.subheader(group_name)
         for action in actions:
-            if st.button(action):
+            if st.button(action,use_container_width=True, type="primary"):
                 # Add action to session_state list with selected player, quarter, and group
                 st.session_state["acties"].append(
                     {
