@@ -1,7 +1,8 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
-import streamlit_shortcuts
+
+st.set_page_config(layout = 'wide')
 
 # Initialize empty list in session_state to store actions
 if "acties" not in st.session_state:
@@ -47,7 +48,7 @@ def create_action_selection(group_name, actions):
 
 
 # Action selection using buttons for each action, displayed horizontally
-action_selection_col1, action_selection_col2, action_selection_col3 = st.columns(3)  # Three columns for action groups
+action_selection_col1, action_selection_col2, action_selection_col3 = st.columns([0.3,0.3,0.4])  # Three columns for action groups
 with action_selection_col1:
     create_action_selection("Schoten", action_groups["Schoten"])
 with action_selection_col2:
@@ -69,70 +70,7 @@ with delete_col1:
 # Display dataframe of actions (translated)
 df = pd.DataFrame(st.session_state["acties"])
 
-# Select only 'Speler' and 'Actie' columns (excluding 'Groep')
-df_to_display = df[['Speler', 'Actie', 'Periode']]  # Select 'Periode' and 'Actie'
+# Select only 'Speler' and 'Actie' columns (excluding 'Periode')
+df_to_display = df[['Speler', 'Actie']]  # Select 'Speler' and 'Actie'
 
-st.dataframe(df_to_display)
-
-
-# **New section for Visualization**
-
-# Define action filter options (translated)
-action_filter_options = ["Alle Acties"]
-
-# Create a dictionary to store selected actions (translated)
-selected_actions = {group: "Alle Acties" for group in action_groups.keys()}
-
-# Create selectboxes in the sidebar for each action group (translated)
-action_filter_cols = st.sidebar.columns(len(action_groups))  # Create columns for selectboxes
-for col_index, group_name in enumerate(action_groups.keys()):
-  selected_actions[group_name] = st.sidebar.selectbox(
-      f"Selecteer {group_name} Acties",
-      ["Alle Acties"] + list(action_groups[group_name])
-  , key=f"action_filter_{col_index}")  # Unique key for each selectbox
-
-# Filter data based on selected actions
-filtered_df = df.copy()  # Start with a copy of the entire DataFrame
-
-# Loop through action groups and filter based on selected actions
-for group_name, selected_action in selected_actions.items():
-  if selected_action != "Alle Acties":
-    filtered_df = filtered_df[filtered_df["Actie"].isin([selected_action])]  # Filter by selected action
-
-# Calculate action counts for the filtered data
-action_counts = filtered_df.groupby("Speler")["Actie"].value_counts().unstack(fill_value=0)
-
-# Define a dictionary mapping actions to colors (adjust as needed)
-action_colors = {
-      "Doelpunt": "green",
-      "Mis": "red",
-      "Redding": "orange",
-      "Block": "yellow",
-      "Goede Pass": "lightgreen",  # Add colors for other actions
-      "Slechte Pass": "lightcoral",
-      "Overtreding": "pink",
-      "U20": "slategray",
-      "UMV": "darkorange",
-      "UMV4": "darkred",
-}
-
-# Create a bar chart with separate bars for each action type
-data = []  # Empty list to store data for each action type
-for col, action in enumerate(action_counts.columns):
-      data.append(go.Bar(
-          x=action_counts.index,  # Players on x-axis
-          y=action_counts[action],
-          name=action,
-          marker_color=action_colors[action]  # Use color from the dictionary
-      ))
-fig = go.Figure(data=data)  # Create a plotly figure with bars
-
-# Set chart layout options (optional)
-fig.update_layout(
-      title="Acties per Speler",
-      xaxis_title="Speler",
-      yaxis_title="Aantal Acties"
-  )
-
-# Display the chart with separate bars
-st.plotly_chart(fig)
+st.dataframe(df_to_display, width = 750, hide_index = True)
